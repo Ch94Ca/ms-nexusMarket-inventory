@@ -103,6 +103,7 @@ docker compose up
 
 ## 🗂️ Project Structure
 
+```text
     ms-nexusMarket-inventory/
 
     ├── api/
@@ -154,6 +155,55 @@ docker compose up
     ├── README.md
 
     └── go.mod
+```
+
+### Directory Descriptions
+
+* **api/**:
+    Contains everything related to the API contracts, such as documentation (e.g., Swagger/OpenAPI files) and sample requests and responses.
+
+* **cmd/**:
+    Holds the application's entry points. Each subdirectory represents a distinct runnable service or executable, such as the main API server or background workers.
+
+* **docker/**:
+    Stores Docker-related files, including service configurations, Dockerfiles for building images, and data volumes for development or testing environments.
+
+* **internal/**: This is the core business logic of the application.
+
+    * **app/**: 
+        Application layer containing use cases, operations, and orchestration logic.
+        domain/: Domain models, entities, interfaces, and pure business rules.
+
+    * **infra/**:
+        Infrastructure implementations for things like databases, external APIs, messaging, and support libraries.
+
+    * **strategy/**: 
+        Pluggable business strategies or interchangeable components implementing domain interfaces.
+
+    * **tests/**: 
+        Helpers, mocks, and base classes for reusable testing utilities.
+
+* **scripts/**: Auxiliary scripts to automate, seed, migrate, or maintain the system.
+
+    * **kafka/**: 
+    Scripts to create Kafka topics or set up the messaging infrastructure.
+    migrate/: Database migration scripts or helpers.
+
+    * **seed/**: 
+    Scripts for populating development or demo data.
+    utils/: Miscellaneous utilities, such as advanced health checks or cleanup tasks.
+
+* **.gitattributes, .gitignore**:
+    Git versioning and configuration files.
+
+* **LICENSE**:
+    The project's license terms.
+
+* **README.md**:
+    Project overview, structure, and instructions.
+
+* **go.mod**:
+    Go module definition and dependency management.
 
 ## 🧪 Testing
 
