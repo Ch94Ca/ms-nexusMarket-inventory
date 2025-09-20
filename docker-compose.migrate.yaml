@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./scripts/migrations:/migrations
+    command:
+      [
+        "-path", "/migrations",
+        "-database", "postgres://ms_nexusmarket_inventory_usr:devpass@ms-nexusmarket-inventory-db:5432/ms_nexusmarket_inventory?sslmode=disable",
+        "up"
+      ]
+    networks:
+      - ms-nexusmarket-network
+
+networks:
+  ms-nexusmarket-network:
+    external: true
