@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  ms-nexusmarket-inventory-db:
+    image: postgres:14
+    container_name: ms-nexusmarket-inventory-db
+    environment:
+      POSTGRES_DB: ms_nexusmarket_inventory
+      POSTGRES_USER: ms_nexusmarket_inventory_usr
+      POSTGRES_PASSWORD: devpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ms_nexusmarket_inventory_data:/var/lib/postgresql/data
+    networks:
+      - ms-nexusmarket-network
+
+volumes:
+  ms_nexusmarket_inventory_data:
+
+networks:
+  ms-nexusmarket-network:
+    external: true

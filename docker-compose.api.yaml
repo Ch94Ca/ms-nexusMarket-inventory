@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  ms-nexusmarket-inventory-api:
+    build:
+      context: .
+      dockerfile: ./docker/dockerfiles/Dockerfile.api
+    container_name: ms-nexusmarket-inventory-api
+    environment:
+      DB_HOST: ms-nexusmarket-inventory-db
+      DB_USER: ms_nexusmarket_inventory_usr
+      DB_PASSWORD: devpass
+      DB_NAME: ms_nexusmarket_inventory
+      DB_PORT: 5432
+    ports:
+      - "8090:8090"
+    restart: always
+    networks:
+      - ms-nexusmarket-network
+
+networks:
+  ms-nexusmarket-network:
+    external: true
