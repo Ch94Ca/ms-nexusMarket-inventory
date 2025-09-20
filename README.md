@@ -3,7 +3,7 @@
 [![License: Apache](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 ![Docker: Build](https://img.shields.io/badge/Docker-Cloud_Build-blue.svg)
 ![Docs: Swagger Ui](https://img.shields.io/badge/Docs-Swagger_UI-green.svg)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/Ch94Ca/ms-nexusMarket-inventory)](https://goreportcard.com/report/github.com/Ch94Ca/ms-nexusMarket-inventory)
 
 ## ✨ Context
 
@@ -100,8 +100,11 @@ docker network create ms-nexusmarket-network
 # Start infrastructure services (Postgres, Kafka, Mongo, etc):
 docker-compose -f docker-compose.infra.yaml up -d
 
+# Run database migrations
+docker-compose -f docker-compose.migrate.yaml up -d
+
 # Start the API (run this each time you want to update code or restart just the API):
-docker-compose -f docker-compose.api.yaml up --build
+docker-compose -f docker-compose.api.yaml up --build -d
 
 # Access the Swagger documentation:
 # http://localhost:8090/swagger/index.html
@@ -146,7 +149,7 @@ docker-compose -f docker-compose.api.yaml up --build
 
     │ ├── kafka/
 
-    │ ├── migrate/
+    │ ├── migrations/
 
     │ ├── seed/
 
@@ -198,6 +201,9 @@ docker-compose -f docker-compose.api.yaml up --build
     * **seed/**: 
     Scripts for populating development or demo data.
     utils/: Miscellaneous utilities, such as advanced health checks or cleanup tasks.
+
+    * **migrations/**:
+        Database schema migration files for PostgreSQL. Contains versioned SQL scripts to create, modify, and rollback database structure changes. Each migration includes both `.up.sql` (apply changes) and `.down.sql` (rollback changes) files to ensure safe database evolution across environments.
 
 * **.gitattributes, .gitignore**:
     Git versioning and configuration files.
