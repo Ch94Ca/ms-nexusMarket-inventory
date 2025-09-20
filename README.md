@@ -103,7 +103,57 @@ docker compose up
 
 ## 🗂️ Project Structure
 
-Work In Progess
+    ms-nexusMarket-inventory/
+
+    ├── api/
+
+    │ ├── docs/
+
+    │ └── examples/
+
+    ├── cmd/
+
+    │ └── api/
+
+    ├── docker/
+
+    │ ├── config/
+
+    │ ├── dockerfiles/
+
+    │ └── volumes/
+
+    ├── internal/
+
+    │ ├── app/
+
+    │ ├── domain/
+
+    │ ├── infra/
+
+    │ ├── strategy/
+
+    │ └── tests/
+
+    ├── scripts/
+
+    │ ├── kafka/
+
+    │ ├── migrate/
+
+    │ ├── seed/
+
+    │ └── utils/
+
+    ├── .gitattributes
+
+    ├── .gitignore
+
+    ├── LICENSE
+
+    ├── README.md
+
+    └── go.mod
 
 ## 🧪 Testing
 
