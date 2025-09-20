@@ -94,8 +94,14 @@
 git clone https://github.com/Ch94Ca/ms-nexusMarket-inventory.git
 cd ms-nexusMarket-inventory
 
-# Start the complete stack (API, Kafka, Postgres, Mongo)
-docker compose up
+# (First time only) Create the shared external Docker network:
+docker network create ms-nexusmarket-network
+
+# Start infrastructure services (Postgres, Kafka, Mongo, etc):
+docker-compose -f docker-compose.infra.yaml up -d
+
+# Start the API (run this each time you want to update code or restart just the API):
+docker-compose -f docker-compose.api.yaml up --build
 
 # Access the Swagger documentation:
 # http://localhost:8090/swagger/index.html

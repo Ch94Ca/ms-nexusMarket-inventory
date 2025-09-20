@@ -1,0 +1,14 @@
+FROM golang:1.25.1-alpine
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./          
+RUN go mod download
+
+COPY . .
+RUN go build -o inventory-api ./cmd/api
+
+EXPOSE 8090
+
+CMD ["./inventory-api"]
