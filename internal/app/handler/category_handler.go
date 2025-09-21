@@ -222,7 +222,7 @@ func (h *CategoryHandler) DeleteCategory(c *gin.Context) {
 				"Category not found when deleting",
 				zap.Int("categoryID", id),
 			)
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.JSON(http.StatusNoContent, nil)
 		default:
 			h.logger.Error(
 				"Internal error while deleting category",
