@@ -57,7 +57,7 @@
 
 * **Orchestration**: Docker Compose (local stack)
 
-* **Testing**: Go Testing, testify/mock
+* **Testing**: Go Testing, testify/mock, mockery
 
 ## 📡 RESTful Endpoints
 
