@@ -98,13 +98,16 @@ cd ms-nexusMarket-inventory
 docker network create ms-nexusmarket-network
 
 # Start infrastructure services (Postgres, Kafka, Mongo, etc):
-docker-compose -f docker-compose.infra.yaml up -d
+cd docker/docker-compose/infra
+docker-compose up -d
 
 # Run database migrations
-docker-compose -f docker-compose.migrate.yaml up -d
+cd docker/docker-compose/migration
+docker-compose up -d
 
 # Start the API (run this each time you want to update code or restart just the API):
-docker-compose -f docker-compose.api.yaml up --build -d
+cd docker/docker-compose/api
+docker-compose up
 
 # Access the Swagger documentation:
 # http://localhost:8090/swagger/index.html

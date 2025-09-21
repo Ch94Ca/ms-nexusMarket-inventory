@@ -1,13 +1,27 @@
-FROM golang:1.25.1-alpine
+FROM golang:1.25.1-alpine AS builder
+
+RUN apk add --no-cache gcc musl-dev
 
 WORKDIR /app
 
 COPY go.mod ./
-COPY go.sum ./          
+COPY go.sum ./
+
 RUN go mod download
 
 COPY . .
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+RUN swag init -g ./cmd/api/main.go -o ./api/docs
+
 RUN go build -o inventory-api ./cmd/api
+
+FROM alpine:latest
+
+WORKDIR /root/
+
+COPY --from=builder /app/inventory-api .
 
 EXPOSE 8090
 

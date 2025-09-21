@@ -3,7 +3,7 @@ services:
   migrate:
     image: migrate/migrate
     volumes:
-      - ./scripts/migrations:/migrations
+      - ../../scripts/migrations:/migrations
     command:
       [
         "-path", "/migrations",
