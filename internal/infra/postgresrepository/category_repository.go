@@ -3,6 +3,7 @@ package postgresrepository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/domain"
 	"gorm.io/gorm"
@@ -19,6 +20,7 @@ func NewCategoryRepositoryPostgres(db *gorm.DB) *CategoryRepositoryPostgres {
 }
 
 func (r *CategoryRepositoryPostgres) Create(category *domain.Category) error {
+	category.CreatedAt = time.Now()
 	return r.db.Create(category).Error
 }
 
@@ -44,7 +46,9 @@ func (r *CategoryRepositoryPostgres) ListAll() ([]*domain.Category, error) {
 }
 
 func (r *CategoryRepositoryPostgres) Update(category *domain.Category) error {
-	return r.db.Save(category).Error
+	now := time.Now()
+	category.UpdatedAt = &now
+	return r.db.Updates(category).Error
 }
 
 func (r *CategoryRepositoryPostgres) Delete(id int) error {

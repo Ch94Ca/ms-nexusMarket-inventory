@@ -3,7 +3,6 @@ package usecase
 
 import (
 	"context"
-	"time"
 
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/app/dtos"
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/domain"
@@ -23,8 +22,7 @@ func (u *CategoryUsecase) CreateCategory(ctx context.Context, dto dtos.CreateCat
 	}
 
 	category := &domain.Category{
-		Name:      dto.Name,
-		CreatedAt: time.Now(),
+		Name: dto.Name,
 	}
 
 	if err := u.repo.Create(category); err != nil {
