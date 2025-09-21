@@ -40,12 +40,7 @@ func (h *CategoryHandler) CreateCategory(c *gin.Context) {
 
 	category, err := h.categoryUsecase.CreateCategory(c.Request.Context(), createCategoryDTO)
 	if err != nil {
-		switch err {
-		case domain.ErrInvalidCategoryName:
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 
@@ -97,7 +92,6 @@ func (h *CategoryHandler) GetCategoryByID(c *gin.Context) {
 
 	category, err := h.categoryUsecase.GetCategoryByID(c.Request.Context(), id)
 	if err != nil {
-		log.Printf("Error retrieving category: %v", err)
 		switch err {
 		case domain.ErrCategoryNotFound:
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

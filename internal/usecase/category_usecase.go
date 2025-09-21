@@ -43,7 +43,6 @@ func (u *CategoryUsecase) GetCategoryByID(ctx context.Context, id int) (*domain.
 }
 
 func (u *CategoryUsecase) UpdateCategory(ctx context.Context, id int, dto dtos.UpdateCategoryDTO) error {
-
 	if dto.Name == "" {
 		return domain.ErrInvalidCategoryName
 	}

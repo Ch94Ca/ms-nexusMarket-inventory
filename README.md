@@ -61,13 +61,12 @@
 
 ## 📡 RESTful Endpoints
 
-* **POST /stock/reserve** — Reserve stock units for a chosen product
-
-* **POST /stock/release** — Release previously reserved units
-
-* **GET /stock/{productId}** — Query current stock for a specific product
-
-* **GET /stock/movements/{productId}** — Query product audit/history
+* **Categories**: 
+    *   **POST /categories** - Create a new category
+    *   **GET /categories** - List all categories
+    *   **GET /categories/{id}** - Find a category by its ID
+    *   **PATCH /categories/{id}** - Change an existing name by its ID
+    *   **DELETE /categories/{id}** - Delete an existing name by its ID
 
 ## 🏆 MVP Requirements
 
