@@ -34,16 +34,16 @@ func TestCreateCategory(t *testing.T) {
 		{
 			name:        "invalid name",
 			dto:         dtos.CreateCategoryDTO{Name: ""},
-			mockSetup:   func(repo *categoryRepositoryMock.MockCategoryRepository) {}, // Não espera chamada
+			mockSetup:   func(repo *categoryRepositoryMock.MockCategoryRepository) {},
 			expectedErr: domain.ErrInvalidCategoryName,
 		},
 		{
 			name: "repo error",
 			dto:  dtos.CreateCategoryDTO{Name: "Electronics"},
 			mockSetup: func(repo *categoryRepositoryMock.MockCategoryRepository) {
-				repo.On("Create", mock.Anything).Return(errors.New("erro do banco"))
+				repo.On("Create", mock.Anything).Return(errors.New("database error"))
 			},
-			expectedErr: errors.New("erro do banco"),
+			expectedErr: errors.New("database error"),
 		},
 	}
 
@@ -188,7 +188,7 @@ func TestUpdateCategory(t *testing.T) {
 			name:        "invalid name",
 			id:          1,
 			dto:         dtos.UpdateCategoryDTO{Name: ""},
-			mockSetup:   func(repo *categoryRepositoryMock.MockCategoryRepository) {}, // Não espera chamada
+			mockSetup:   func(repo *categoryRepositoryMock.MockCategoryRepository) {},
 			expectedErr: domain.ErrInvalidCategoryName,
 		},
 	}
