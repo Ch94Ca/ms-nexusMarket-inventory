@@ -61,13 +61,12 @@
 
 ## 📡 RESTful Endpoints
 
-* **POST /stock/reserve** — Reserve stock units for a chosen product
-
-* **POST /stock/release** — Release previously reserved units
-
-* **GET /stock/{productId}** — Query current stock for a specific product
-
-* **GET /stock/movements/{productId}** — Query product audit/history
+* **Categories**: 
+    *   **POST /categories** - Create a new category
+    *   **GET /categories** - List all categories
+    *   **GET /categories/{id}** - Find a category by its ID
+    *   **PATCH /categories/{id}** - Change an existing name by its ID
+    *   **DELETE /categories/{id}** - Delete an existing name by its ID
 
 ## 🏆 MVP Requirements
 
@@ -98,13 +97,16 @@ cd ms-nexusMarket-inventory
 docker network create ms-nexusmarket-network
 
 # Start infrastructure services (Postgres, Kafka, Mongo, etc):
-docker-compose -f docker-compose.infra.yaml up -d
+cd docker/docker-compose/infra
+docker-compose up -d
 
 # Run database migrations
-docker-compose -f docker-compose.migrate.yaml up -d
+cd docker/docker-compose/migration
+docker-compose up -d
 
 # Start the API (run this each time you want to update code or restart just the API):
-docker-compose -f docker-compose.api.yaml up --build -d
+cd docker/docker-compose/api
+docker-compose up
 
 # Access the Swagger documentation:
 # http://localhost:8090/swagger/index.html

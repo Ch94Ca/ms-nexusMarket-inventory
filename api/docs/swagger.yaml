@@ -1,0 +1,143 @@
+basePath: /
+definitions:
+  dtos.CategoryDTO:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dtos.CreateCategoryDTO:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dtos.UpdateCategoryDTO:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+host: localhost:8090
+info:
+  contact: {}
+  description: This is a API for a inventory management using Gin framework.
+  title: ms-nexus-inventory API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all categories
+      operationId: list_categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of categories
+          schema:
+            items:
+              $ref: '#/definitions/dtos.CategoryDTO'
+            type: array
+      summary: List Categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Creates a new category
+      operationId: create_category
+      parameters:
+      - description: Category to be created
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateCategoryDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.CategoryDTO'
+      summary: Create Category
+      tags:
+      - categories
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing category
+      operationId: delete_category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dtos.CategoryDTO'
+      summary: Delete Category
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a category by its ID
+      operationId: find_category_by_id
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category found
+          schema:
+            $ref: '#/definitions/dtos.CategoryDTO'
+      summary: Find Category by ID
+      tags:
+      - categories
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing category
+      operationId: update_category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category to be updated
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateCategoryDTO'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/dtos.CategoryDTO'
+      summary: Update Category
+      tags:
+      - categories
+swagger: "2.0"

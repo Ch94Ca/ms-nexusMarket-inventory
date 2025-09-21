@@ -3,7 +3,7 @@ version: '3.9'
 services:
   ms-nexusmarket-inventory-api:
     build:
-      context: .
+      context: ../../..
       dockerfile: ./docker/dockerfiles/Dockerfile.api
     container_name: ms-nexusmarket-inventory-api
     environment:

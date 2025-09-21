@@ -1,15 +1,83 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/app/handler"
+	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/infra/postgresrepository"
+	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/usecase"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
+	_ "github.com/Ch94Ca/ms-nexusMarket-inventory/api/docs"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title ms-nexus-inventory API
+// @version 1.0
+// @description This is a API for a inventory management using Gin framework.
+// @host localhost:8090
+// @BasePath /
 func main() {
+	logger := setupLogger()
+	defer logger.Sync()
+	db := setupDatabase()
+
+	categoryRepo := postgresrepository.NewCategoryRepositoryPostgres(db)
+	categoryUC := usecase.NewCategoryUsecase(categoryRepo)
+
 	r := gin.Default()
-	r.GET("/health", handler.HealthCheckHandler)
-	error := r.Run(":8090")
-	if error != nil {
-		panic(error)
+	categoryHandler := handler.NewCategoryHandler(categoryUC, logger)
+
+	setupRoutes(r, categoryHandler)
+
+	if err := r.Run(":8090"); err != nil {
+		log.Panic(err)
 	}
+}
+
+func setupLogger() *zap.Logger {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Panic("Failed to initialize logger: ", err)
+	}
+	return logger
+}
+
+func setupRoutes(r *gin.Engine, categoryHandler *handler.CategoryHandler) {
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/health", handler.HealthCheckHandler)
+
+	setupCategoryRoutes(r, categoryHandler)
+}
+
+func setupCategoryRoutes(r *gin.Engine, categoryHandler *handler.CategoryHandler) {
+	r.POST("/categories", categoryHandler.CreateCategory)
+	r.GET("/categories", categoryHandler.ListCategories)
+	r.GET("/categories/:id", categoryHandler.GetCategoryByID)
+	r.PATCH("/categories/:id", categoryHandler.UpdateCategory)
+	r.DELETE("/categories/:id", categoryHandler.DeleteCategory)
+}
+
+func setupDatabase() *gorm.DB {
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		dbHost, dbUser, dbPassword, dbName, dbPort)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Panic("Failed to connect to the database: ", err)
+	}
+
+	return db
 }
