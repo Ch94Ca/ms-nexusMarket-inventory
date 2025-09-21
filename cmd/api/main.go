@@ -9,6 +9,7 @@ import (
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/infra/postgresrepository"
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/usecase"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -23,19 +24,29 @@ import (
 // @host localhost:8090
 // @BasePath /
 func main() {
+	logger := setupLogger()
+	defer logger.Sync()
 	db := setupDatabase()
 
 	categoryRepo := postgresrepository.NewCategoryRepositoryPostgres(db)
 	categoryUC := usecase.NewCategoryUsecase(categoryRepo)
 
 	r := gin.Default()
-	categoryHandler := handler.NewCategoryHandler(categoryUC)
+	categoryHandler := handler.NewCategoryHandler(categoryUC, logger)
 
 	setupRoutes(r, categoryHandler)
 
 	if err := r.Run(":8090"); err != nil {
 		log.Panic(err)
 	}
+}
+
+func setupLogger() *zap.Logger {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Panic("Failed to initialize logger: ", err)
+	}
+	return logger
 }
 
 func setupRoutes(r *gin.Engine, categoryHandler *handler.CategoryHandler) {

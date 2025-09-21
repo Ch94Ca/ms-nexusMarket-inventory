@@ -2,7 +2,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -10,14 +9,16 @@ import (
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/domain"
 	"github.com/Ch94Ca/ms-nexusMarket-inventory/internal/usecase"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type CategoryHandler struct {
 	categoryUsecase *usecase.CategoryUsecase
+	logger          *zap.Logger
 }
 
-func NewCategoryHandler(categoryUsecase *usecase.CategoryUsecase) *CategoryHandler {
-	return &CategoryHandler{categoryUsecase: categoryUsecase}
+func NewCategoryHandler(categoryUsecase *usecase.CategoryUsecase, logger *zap.Logger) *CategoryHandler {
+	return &CategoryHandler{categoryUsecase: categoryUsecase, logger: logger}
 }
 
 // CreateCategory creates a new category
@@ -34,12 +35,21 @@ func (h *CategoryHandler) CreateCategory(c *gin.Context) {
 	var createCategoryDTO dtos.CreateCategoryDTO
 
 	if err := c.ShouldBindJSON(&createCategoryDTO); err != nil {
+		h.logger.Error(
+			"Failed to decode payload for category creation",
+			zap.Error(err),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
 	category, err := h.categoryUsecase.CreateCategory(c.Request.Context(), createCategoryDTO)
 	if err != nil {
+		h.logger.Error(
+			"Internal error while creating category",
+			zap.Error(err),
+			zap.Any("payload", createCategoryDTO),
+		)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
@@ -59,12 +69,11 @@ func (h *CategoryHandler) CreateCategory(c *gin.Context) {
 func (h *CategoryHandler) ListCategories(c *gin.Context) {
 	categories, err := h.categoryUsecase.ListCategories(c.Request.Context())
 	if err != nil {
-		switch err {
-		case domain.ErrInvalidCategoryName:
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-		}
+		h.logger.Error(
+			"Internal error while listing categories",
+			zap.Error(err),
+		)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 
@@ -86,6 +95,11 @@ func (h *CategoryHandler) GetCategoryByID(c *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		h.logger.Warn(
+			"Invalid ID format when fetching category",
+			zap.String("idStr", idStr),
+			zap.Error(err),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
 	}
@@ -94,8 +108,17 @@ func (h *CategoryHandler) GetCategoryByID(c *gin.Context) {
 	if err != nil {
 		switch err {
 		case domain.ErrCategoryNotFound:
+			h.logger.Info(
+				"Category not found when searching by ID",
+				zap.Int("id", id),
+			)
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		default:
+			h.logger.Error(
+				"Internal error while fetching category by ID",
+				zap.Int("id", id),
+				zap.Error(err),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		}
 		return
@@ -121,6 +144,11 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		h.logger.Warn(
+			"Invalid ID format when updating category",
+			zap.String("idStr", idStr),
+			zap.Error(err),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
 	}
@@ -128,6 +156,11 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 	var updateCategoryDTO dtos.UpdateCategoryDTO
 
 	if err := c.ShouldBindJSON(&updateCategoryDTO); err != nil {
+		h.logger.Error(
+			"Failed to decode payload for category update",
+			zap.Error(err),
+			zap.Int("categoryID", id),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
@@ -136,8 +169,19 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 	if err != nil {
 		switch err {
 		case domain.ErrInvalidCategoryName:
+			h.logger.Warn(
+				"Invalid category name on update",
+				zap.Int("categoryID", id),
+				zap.Error(err),
+			)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		default:
+			h.logger.Error(
+				"Internal error while updating category",
+				zap.Int("categoryID", id),
+				zap.Error(err),
+				zap.Any("payload", updateCategoryDTO),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		}
 		return
@@ -161,17 +205,30 @@ func (h *CategoryHandler) DeleteCategory(c *gin.Context) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		h.logger.Warn(
+			"Invalid ID format when deleting category",
+			zap.String("idStr", idStr),
+			zap.Error(err),
+		)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
 	}
 
 	err = h.categoryUsecase.DeleteCategory(c.Request.Context(), id)
 	if err != nil {
-		log.Printf("Error deleting category: %v", err)
 		switch err {
 		case domain.ErrCategoryNotFound:
+			h.logger.Info(
+				"Category not found when deleting",
+				zap.Int("categoryID", id),
+			)
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		default:
+			h.logger.Error(
+				"Internal error while deleting category",
+				zap.Int("categoryID", id),
+				zap.Error(err),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		}
 		return
