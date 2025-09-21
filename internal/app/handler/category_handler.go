@@ -136,7 +136,7 @@ func (h *CategoryHandler) GetCategoryByID(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Category ID"
 // @Param category body dtos.UpdateCategoryDTO true "Category to be updated"
-// @Success 204 {object} dtos.CategoryDTO
+// @Success 204
 // @Router /categories/{id} [patch]
 func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 
@@ -198,7 +198,7 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Category ID"
-// @Success 204 {object} dtos.CategoryDTO
+// @Success 204
 // @Router /categories/{id} [delete]
 func (h *CategoryHandler) DeleteCategory(c *gin.Context) {
 	idStr := c.Param("id")
